@@ -1,4 +1,4 @@
-# 🥷 SQL Performance Lab & Database Architecture Portfolio
+# SQL Performance Lab & Database Architecture Portfolio
 
 Welcome to my advanced database engineering and data architecture repository. This lab serves as documented evidence of my technical criteria for resolving high-concurrency, mass-scale data infrastructure bottlenecks. 
 
