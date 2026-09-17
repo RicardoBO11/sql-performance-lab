@@ -79,7 +79,18 @@ Instead of relying on basic CRUD operations, this portfolio focuses on **hardwar
 ### Master Level Model Engineering (3NF Structural Design)
 Beyond index-tuning, I architect clean data models. I successfully re-engineered chaotic non-atomic financial models into strict **Third Normal Form (3NF)** architectures (splitting decoupled schemas into `clientes`, `productos`, `impuestos`, `facturas`, and `factura_items`). 
 
-To preserve real-time ingest, I bridge relational models with infrastructure by linking range-partitioning schemas with cloud **Tablespaces** to automate data lifecycles across tiered storage hardware (**Hot, Warm, and Cold SSD/HDD Media**).
+To preserve real-time ingestion, I bridge relational models with infrastructure by linking range-partitioning schemas with cloud **Tablespaces** to automate data lifecycles across tiered storage hardware (**Hot, Warm, and Cold SSD/HDD Media**).
 
 ---
+
+### ☁️ Case 6: Cloud-Native ELT Pipeline & Cost Optimization (Mercado Libre Profile)
+* **The Production Crisis:** Traditional ETL row-by-row memory manipulation was causing recurrent Out-of-Memory (OOM) fatal crashes on local processing containers while trying to ingest high-volume, semi-structured daily JSON logs.
+* **The Senior Architectural Solution:** Shifted the ingest infrastructure into a Cloud-Native **ELT (Extract, Load, Transform)** workflow. Implemented Python SDK orchestration using `LoadJobConfig` to stream raw schemas directly into an isolated **Google Cloud Storage (GCS)** landing zone and batch-load them straight into **Google BigQuery** staging targets.
+* **Analytical Architecture (Star Schema & SCD Tipo 2):** Delegated heavy data cleaning, structural schema drift handling, and type-casting to BigQuery's massively parallel computing layer using native SQL. Modeled the finalized dataset into a high-performance **Star Schema**—isolating performance-oriented metrics into a central **Fact Table** while capturing temporal drift through **Slowly Changing Dimensions (SCD) Tipo 2** using historical row versioning and *Surrogate Keys*.
+
+### 📦 Anti-Patterns Identified & Patched
+* **Type Mismatch / Implicit Conversion:** Fixed performance leaks caused by non-coincident parameter querying (e.g., comparing numerical fields against string literal arguments), which forced the Query Planner into a fallback hidden `CAST` operation, killing index optimization.
+* **Non-Sargable Functional Expressions:** Identified and rewrote query predicates that wrapped indexed keys inside operations like `LOWER()`, `DATE()`, or `ROUND()`, converting non-sargable full table scans back into microsecond execution windows.
+* **Composite Column Ordering Violations:** Restructured key layout sequences inside multi-column B-Trees. Enforced the cardinality rule to guarantee that high-selectivity equality predicates reside at the root nodes, preventing memory-sorting (`filesort`) allocations in RAM.
+
 _"Code is written in minutes; architectural consequences are paid for years."_
